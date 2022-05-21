@@ -1,0 +1,14 @@
+{
+    "name": "wm/slim-example",
+    "authors": [
+        {
+            "name": "wm",
+            "email": "wwwhitemode@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^4.10",
+        "slim/psr7": "^1.5",
+        "slim/http": "^1.2"
+    }
+}
