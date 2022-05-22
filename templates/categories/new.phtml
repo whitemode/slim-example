@@ -1,0 +1,12 @@
+<form action="/categories" method="post">
+    <div>
+        <label>
+            Название категории:
+            <input type="text" name="category[name]" value="<?= htmlspecialchars($category['name']) ?>">
+        </label>
+        <input type="submit" value="Добавить">
+        <?php if (mb_strlen($error) !== 0): ?>
+            <div><?= $error ?></div>
+        <?php endif ?>
+    </div>
+</form>

@@ -1,0 +1,17 @@
+<form action="/categories" method="get">
+  <input type="search" name="request" value="<?= htmlspecialchars($request) ?>" />
+  <input type="submit" value="Search" />
+</form>
+<table>
+    <?php foreach ($categories as $category): ?>
+        <tr>
+            <td>
+                <?= $category["id"] ?>
+            </td>
+            <td>
+                <?= $category["name"] ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+<p><a href = "/categories/new">Добавить новую категорию</a></p>

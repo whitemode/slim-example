@@ -12,43 +12,60 @@ $container->set('renderer', function () {
 $app = AppFactory::createFromContainer($container);
 $app->addErrorMiddleware(true, true, true);
 
-$companiesStr = "Автобизнес0Бытовые услуги, сервис, ЖКХ0Государство и общество0Здоровье, медицина, красота0Кадровые и рекрутинговые компании0Культура и искусство0Мебель, предметы интерьера0Медицинские учреждения0Недвижимость0Нефтегазовая промышленность0Образование0Оборудование, сырье, материалы0Отдых, спорт, развлечения0Охрана/Безопасность0Продукты питания0Реклама, полиграфия, СМИ0Строительство и ремонт0Телекоммуникации, связь, интернет0Техника для дома и офиса0Торговля0Транспорт и перевозки0Услуги для бизнеса0Финансы, страхование, инвестиции0Экстренные и справочные службы0Юридические, нотариальные, оценочные услуги";
-
-$companies = explode("0", $companiesStr);
+$categories = json_decode(file_get_contents("categories.json"), true);
 
 $app->get('/', function ($request, $response) {
     $response->getBody()->write('Welcome to Slim!
-                                <p><a href = "/companies">companies</a></p>
+                                <p><a href = "/categories">categories</a></p>
                                 ');
     return $response;
 });
 
-$app->get('/companies', function ($request, $response) use ($companies) {
-    $request = $request->getQueryParam('request', '');
+$app->get('/categories', function ($request, $response) use ($categories) {
+    $request = $request->getQueryParam('request');
 
     if ($request !== '') {
-        $desiredCompanies = array_filter($companies, fn($company) => mb_strpos($company, $request) !== false);
-        
+        $desiredCategories = array_filter($categories, fn($category) => mb_strpos($category["name"], $request) !== false);
         $params = [
             "request" => $request,
-            "companies" => $desiredCompanies
+            "categories" => $desiredCategories
         ];
     } else {
         $params = [
             "request" => $request,
-            "companies" => $companies
+            "categories" => $categories
         ];
     }
 
-    return $this->get('renderer')->render($response, 'companies/companies.phtml', $params);
+    return $this->get('renderer')->render($response, 'categories/categories.phtml', $params);
 });
 
-$app->get('/companies/{id}', function ($request, $response, array $args) use ($companies) {
-    $id = $args['id'];
-    if (!array_key_exists($id-1, $companies)) {
-        return $response->withStatus(404);
+$app->get('/categories/new', function ($request, $response) {
+    $params = [
+        'category' => ['id' => '', 'name' => ''],
+        'error' => ''
+    ];
+    return $this->get('renderer')->render($response, "categories/new.phtml", $params);
+});
+
+$app->post('/categories', function ($request, $response) use ($categories) {
+    $newCategory = $request->getParsedBodyParam('category');
+    
+    if (mb_strlen($newCategory['name']) !== 0) {
+        $newId = count($categories) + 1;
+        $newCategory['id'] = $newId;
+        $categories[] = $newCategory;
+        
+        file_put_contents("categories.json", json_encode($categories));
+        
+        return $response->withRedirect('/categories', 302);
     }
-    return $response->write($companies[$id-1]);
+
+    $params = [
+        'category' => $newCategory,
+        'error' => 'Название категории не может быть пустым'
+    ];
+    return $this->get('renderer')->render($response, "categories/new.phtml", $params);
 });
 
 $app->run();
