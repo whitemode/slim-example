@@ -1,0 +1,20 @@
+<form action="/companies" method="get">
+  <input type="search" name="request" value="<?= htmlspecialchars($request) ?>" />
+  <input type="submit" value="Search" />
+</form>
+
+<table>
+    <?php $i = 1; foreach ($companies as $company): ?>
+        <tr>
+            <td>
+                <?php
+                echo $i;
+                $i++;
+                ?>
+            </td>
+            <td>
+                <?= $company ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
