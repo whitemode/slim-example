@@ -2,6 +2,7 @@
   <input type="search" name="request" value="<?= htmlspecialchars($request) ?>" />
   <input type="submit" value="Search" />
 </form>
+<p><?= $flash['success'][0] ?></p>
 <table>
     <?php foreach ($categories as $category): ?>
         <tr>
